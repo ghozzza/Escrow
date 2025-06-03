@@ -27,17 +27,17 @@ contract TuitionEscrow is Initializable, ReentrancyGuardUpgradeable {
     /// @notice Emitted when a payment is deposited into the escrow
     /// @param payer The address of the student making the payment
     /// @param amount The amount of tokens deposited
-    event Deposit(address indexed payer, uint256 amount);
+    event Deposited(address indexed payer, uint256 amount);
 
     /// @notice Emitted when funds are released to the university
     /// @param university The address of the university receiving the payment
     /// @param amount The amount of tokens released
-    event Release(address indexed university, uint256 amount);
+    event Released(address indexed university, uint256 amount);
 
     /// @notice Emitted when funds are refunded to the student
     /// @param payer The address of the student receiving the refund
     /// @param amount The amount of tokens refunded
-    event Refund(address indexed payer, uint256 amount);
+    event Refunded(address indexed payer, uint256 amount);
 
     /// @notice The address of the student making the payment
     address public payer;
@@ -97,7 +97,7 @@ contract TuitionEscrow is Initializable, ReentrancyGuardUpgradeable {
         if (_amount == 0) revert InvalidAmount();
         IERC20(tokenPaymentAddress).safeTransferFrom(payer, address(this), _amount);
         amount += _amount;
-        emit Deposit(payer, _amount);
+        emit Deposited(payer, _amount);
     }
 
     /// @notice Allows the factory owner to release funds to the university
@@ -106,7 +106,7 @@ contract TuitionEscrow is Initializable, ReentrancyGuardUpgradeable {
         if (msg.sender != ITuitionEscrowFactory(escrowFactoryAddress).owner()) revert NotFactoryOwner();
         if (amount == 0) revert ZeroBalance();
         IERC20(tokenPaymentAddress).safeTransfer(university, amount);
-        emit Release(university, amount);
+        emit Released(university, amount);
     }
 
     /// @notice Allows the factory owner to refund funds to the student
@@ -115,6 +115,6 @@ contract TuitionEscrow is Initializable, ReentrancyGuardUpgradeable {
         if (msg.sender != ITuitionEscrowFactory(escrowFactoryAddress).owner()) revert NotFactoryOwner();
         if (amount == 0) revert ZeroBalance();
         IERC20(tokenPaymentAddress).safeTransfer(payer, amount);
-        emit Refund(payer, amount);
+        emit Refunded(payer, amount);
     }
 }

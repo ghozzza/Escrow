@@ -42,6 +42,19 @@ contract TuitionEscrowFactory is Initializable {
     /// @notice Version of the contract
     uint256 public constant version = 1;
 
+    /// @notice Event emitted when a new escrow is created
+    event EscrowCreated(
+        address indexed escrowAddress,
+        address indexed university,
+        string invoiceRef,
+        address tokenPaymentAddress,
+        address payer,
+        address tuitionEscrowImplementation
+    );
+
+    /// @notice Event emitted when the ownership is transferred
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
     /// @notice Constructor that disables initializers
     constructor() {
         _disableInitializers();
@@ -61,13 +74,19 @@ contract TuitionEscrowFactory is Initializable {
     function createEscrow(address _university, string calldata _invoiceRef, address _tokenPaymentAddress) public {
         if (_university == address(0)) revert ZeroAddress();
         if (_tokenPaymentAddress == address(0)) revert ZeroAddress();
-        
-        TuitionEscrow tuitionEscrow = new TuitionEscrow();
-        ProxyAdmin proxyAdmin = new ProxyAdmin(owner);
+
+        TuitionEscrow tuitionEscrowImplementation = new TuitionEscrow();
         TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(
-            address(tuitionEscrow),
-            address(proxyAdmin),
-            abi.encodeWithSelector(TuitionEscrow.initialize.selector, msg.sender, _university, _tokenPaymentAddress, address(this), _invoiceRef)
+            address(tuitionEscrowImplementation),
+            msg.sender,
+            abi.encodeWithSelector(
+                TuitionEscrow.initialize.selector,
+                msg.sender,
+                _university,
+                _tokenPaymentAddress,
+                address(this),
+                _invoiceRef
+            )
         );
 
         EscrowDetails memory escrowDetails = EscrowDetails({
@@ -79,13 +98,24 @@ contract TuitionEscrowFactory is Initializable {
         });
         escrows[escrowCount] = escrowDetails;
         escrowCount++;
+
+        emit EscrowCreated(
+            address(proxy),
+            _university,
+            _invoiceRef,
+            _tokenPaymentAddress,
+            msg.sender,
+            address(tuitionEscrowImplementation)
+        );
     }
 
     /// @notice Transfers ownership of the contract to a new address
     /// @param _newOwner Address of the new owner
     function transferOwnership(address _newOwner) public {
-        if(msg.sender != owner) revert NotOwner();
-        if(_newOwner == address(0)) revert ZeroAddress();
+        if (msg.sender != owner) revert NotOwner();
+        if (_newOwner == address(0)) revert ZeroAddress();
         owner = _newOwner;
+
+        emit OwnershipTransferred(msg.sender, _newOwner);
     }
 }
