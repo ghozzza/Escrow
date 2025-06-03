@@ -78,13 +78,17 @@ const universityPaymentCard = ({
               <span className="text-sm text-muted-foreground dark:text-muted-foreground/80">
                 Total Amount:
               </span>
-              <span className="font-medium dark:text-white">${totalAmount}</span>
+              <span className="font-medium dark:text-white">
+                ${totalAmount}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-muted-foreground dark:text-muted-foreground/80">
                 Token Payment:
               </span>
-              <span className="font-medium dark:text-white">${tokenPayment}</span>
+              <span className="font-medium dark:text-white">
+                ${tokenPayment}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-muted-foreground dark:text-muted-foreground/80">
@@ -99,14 +103,18 @@ const universityPaymentCard = ({
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[425px] dark:bg-gray-800">
           <DialogHeader>
-            <DialogTitle className="dark:text-white">Make a Payment</DialogTitle>
+            <DialogTitle className="dark:text-white">
+              Make a Payment
+            </DialogTitle>
             <DialogDescription className="dark:text-muted-foreground/80">
               Enter the amount you want to pay to {university}.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="amount" className="dark:text-white">Amount</Label>
+              <Label htmlFor="amount" className="dark:text-white">
+                Amount
+              </Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 dark:text-white">
                   $
@@ -126,11 +134,17 @@ const universityPaymentCard = ({
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="dark:text-muted-foreground/80">Invoice Reference:</span>
-                <span className="font-medium dark:text-white">{invoiceRef}</span>
+                <span className="dark:text-muted-foreground/80">
+                  Invoice Reference:
+                </span>
+                <span className="font-medium dark:text-white">
+                  {invoiceRef}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="dark:text-muted-foreground/80">Recipient:</span>
+                <span className="dark:text-muted-foreground/80">
+                  Recipient:
+                </span>
                 <span className="font-medium dark:text-white">
                   {truncateAddress(addressWallet)}
                 </span>

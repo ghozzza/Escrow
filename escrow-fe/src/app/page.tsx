@@ -3,7 +3,9 @@
 import FormCreateTuitionEscrow from "@/components/formCreateTuitionEscrow";
 import UniversityPaymentCard from "@/components/universityPaymentCard";
 import { universities } from "@/contants/universities";
+import { Search } from "lucide-react";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 export default function Page() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,13 +25,13 @@ export default function Page() {
 
       {/* Right side - University List with Search (Scrollable) */}
       <div className="w-full lg:w-1/2 flex flex-col lg:h-screen">
-        {/* Search Bar (Fixed) */}
-        <div className="w-full p-4 lg:p-4 border-b bg-white z-10 flex">
-          <div className="w-full">
-            <input
-              type="text"
+        <div className="w-full p-4 lg:p-4 border-b border-border z-10 mx-auto">
+          <div className="relative mx-auto">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              type="search"
               placeholder="Search universities..."
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="pl-10 pr-4 py-2 w-full bg-background border-border"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -38,7 +40,7 @@ export default function Page() {
 
         {/* Scrollable University List */}
         <div className="flex-1 overflow-y-auto w-full p-4 lg:p-5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] flex justify-center">
-          <div className="w-full max-w-lg">
+          <div className="w-full max-w-lg relative">
             {filteredUniversities.map((university) => (
               <div key={university.address} className="w-full mb-4">
                 <UniversityPaymentCard

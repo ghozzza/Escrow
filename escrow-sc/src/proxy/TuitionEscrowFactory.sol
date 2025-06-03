@@ -61,9 +61,8 @@ contract TuitionEscrowFactory is Initializable {
     }
 
     /// @notice Initializes the contract with the owner address
-    /// @param _owner Address of the contract owner
-    function initialize(address _owner) public initializer {
-        owner = _owner;
+    function initialize() public initializer {
+        owner = msg.sender;
     }
 
     /// @notice Creates a new tuition escrow contract
