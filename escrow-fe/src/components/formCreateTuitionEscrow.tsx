@@ -21,19 +21,21 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { universities } from "@/contants/universities";
 import { tokens } from "@/contants/tokens";
+import { useCreateEscrow } from "@/lib/hooks/writes/createEscrow";
+import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
+import type { ContractFunctionRevertedError } from "viem";
 
-const formCreateTuitionEscrow = () => {
-  const [amount, setAmount] = useState("");
+interface FormCreateTuitionEscrowProps {
+  onEscrowCreated?: (options?: RefetchOptions) => Promise<QueryObserverResult<unknown, ContractFunctionRevertedError>>;
+}
 
-  // Handle amount input to only allow numbers
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow digits
-    if (value === "" || /^\d+$/.test(value)) {
-      setAmount(value);
-    }
-  };
-  
+const formCreateTuitionEscrow = ({ onEscrowCreated }: FormCreateTuitionEscrowProps) => {
+  const [university, setUniversity] = useState("");
+  const [token, setToken] = useState("");
+  const [invoiceRef, setInvoiceRef] = useState("");
+
+  const { isCreateEscrowPending, handleCreateEscrow } =
+    useCreateEscrow(university, invoiceRef, token, onEscrowCreated);
 
   return (
     <div className="p-4">
@@ -48,22 +50,28 @@ const formCreateTuitionEscrow = () => {
         </CardHeader>
         <CardContent className="space-y-6 p-6 bg-white dark:bg-gray-900">
           <div className="space-y-2">
-            <Label htmlFor="university" className="text-gray-700 dark:text-gray-200 font-medium">
+            <Label
+              htmlFor="university"
+              className="text-gray-700 dark:text-gray-200 font-medium"
+            >
               University
             </Label>
-            <Select>
+            <Select value={university} onValueChange={setUniversity}>
               <SelectTrigger
                 id="university"
-                className="border-2 border-purple-200/50 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 dark:border-purple-700/50 dark:focus:border-purple-500 dark:focus:ring-purple-500/20 dark:bg-gray-800 dark:text-gray-200 w-full cursor-pointer transition-all duration-200 rounded-lg shadow-sm hover:border-purple-300 dark:hover:border-purple-600"
+                className="border-2 text-gray-900 border-purple-200/50 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 dark:border-purple-700/50 dark:focus:border-purple-500 dark:focus:ring-purple-500/20 dark:bg-gray-800 dark:text-gray-200 w-full cursor-pointer transition-all duration-200 rounded-lg shadow-sm hover:border-purple-300 dark:hover:border-purple-600"
               >
-                <SelectValue placeholder="Select a university" />
+                <SelectValue
+                  placeholder="Select a university"
+                  className="text-gray-900 dark:text-white"
+                />
               </SelectTrigger>
               <SelectContent className="dark:bg-gray-800">
                 {universities.map((uni) => (
                   <SelectItem
                     key={uni.address}
                     value={uni.address}
-                    className="cursor-pointer dark:text-gray-200 dark:hover:bg-gray-700"
+                    className="cursor-pointer text-gray-900 dark:text-white dark:hover:bg-gray-700"
                   >
                     {uni.name}
                   </SelectItem>
@@ -76,15 +84,21 @@ const formCreateTuitionEscrow = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="token" className="text-gray-700 dark:text-gray-200 font-medium">
+            <Label
+              htmlFor="token"
+              className="text-gray-700 dark:text-gray-200 font-medium"
+            >
               Payment Token
             </Label>
-            <Select>
+            <Select value={token} onValueChange={setToken}>
               <SelectTrigger
                 id="token"
-                className="border-2 border-purple-200/50 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 dark:border-purple-700/50 dark:focus:border-purple-500 dark:focus:ring-purple-500/20 dark:bg-gray-800 dark:text-gray-200 w-full cursor-pointer transition-all duration-200 rounded-lg shadow-sm hover:border-purple-300 dark:hover:border-purple-600"
+                className="border-2 text-gray-900 border-purple-200/50 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 dark:border-purple-700/50 dark:focus:border-purple-500 dark:focus:ring-purple-500/20 dark:bg-gray-800 dark:text-gray-200 w-full cursor-pointer transition-all duration-200 rounded-lg shadow-sm hover:border-purple-300 dark:hover:border-purple-600"
               >
-                <SelectValue placeholder="Select payment token" />
+                <SelectValue
+                  placeholder="Select payment token"
+                  className="text-gray-900 dark:text-white"
+                />
               </SelectTrigger>
               <SelectContent className="dark:bg-gray-800">
                 {tokens.map((token) => (
@@ -101,30 +115,26 @@ const formCreateTuitionEscrow = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="amount" className="text-gray-700 dark:text-gray-200 font-medium">
-              Amount
-            </Label>
-            <Input
-              id="amount"
-              value={amount}
-              onChange={handleAmountChange}
-              placeholder="Enter amount"
-              className="border-2 border-purple-200/50 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 dark:border-purple-700/50 dark:focus:border-purple-500 dark:focus:ring-purple-500/20 dark:bg-gray-800 dark:text-gray-200 transition-all duration-200 rounded-lg shadow-sm hover:border-purple-300 dark:hover:border-purple-600"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="invoiceRef" className="text-gray-700 dark:text-gray-200 font-medium">
+            <Label
+              htmlFor="invoiceRef"
+              className="text-gray-700 dark:text-gray-200 font-medium"
+            >
               Invoice Reference
             </Label>
             <Input
               id="invoiceRef"
+              value={invoiceRef}
+              onChange={(e) => setInvoiceRef(e.target.value)}
               placeholder="Enter invoice reference"
-              className="border-2 border-purple-200/50 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 dark:border-purple-700/50 dark:focus:border-purple-500 dark:focus:ring-purple-500/20 dark:bg-gray-800 dark:text-gray-200 transition-all duration-200 rounded-lg shadow-sm hover:border-purple-300 dark:hover:border-purple-600"
+              className="border-2 text-gray-900 border-purple-200/50 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 dark:border-purple-700/50 dark:focus:border-purple-500 dark:focus:ring-purple-500/20 dark:bg-gray-800 dark:text-gray-200 transition-all duration-200 rounded-lg shadow-sm hover:border-purple-300 dark:hover:border-purple-600"
             />
           </div>
 
-          <Button className="w-full mt-6 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-700 dark:from-purple-700 dark:via-blue-700 dark:to-cyan-700 dark:hover:from-purple-800 dark:hover:via-blue-800 dark:hover:to-cyan-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-101 hover:shadow-xl cursor-pointer">
+          <Button
+            onClick={handleCreateEscrow}
+            disabled={isCreateEscrowPending}
+            className="w-full mt-6 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-700 dark:from-purple-700 dark:via-blue-700 dark:to-cyan-700 dark:hover:from-purple-800 dark:hover:via-blue-800 dark:hover:to-cyan-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-101 hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             Create Escrow
           </Button>
         </CardContent>

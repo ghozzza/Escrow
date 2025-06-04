@@ -1,3 +1,5 @@
-export const usdcAddress = "0x1A15C13e64f4Dc2746644E303d230157640E340F";
-export const tuitionEscrowFactoryAddress = "0x70F98aaCEd0f8176efcD5B082f39432793A48912";
-export const tuitionEscrowAddress = "0xC4ECE4a5cD5296a884835338d131429445de3bFC";
+export const usdcAddress = "0x73Bf551d8F0d00eE81a44607C0655747E6A06854";
+export const tuitionEscrowFactoryAddress = "0xb268f61c7dF38E14574fdC8b042f9Ad25ea0839A";
+export const tuitionEscrowAddress = "0x1902BeEC99317B5d1D6E9d3bD9498B8d539365D2";
+
+export const transactionHash = "https://sepolia.arbiscan.io/tx/";

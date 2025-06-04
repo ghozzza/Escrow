@@ -23,6 +23,7 @@ contract TuitionEscrow is Initializable, ReentrancyGuardUpgradeable {
     error InvalidAmount();
     error ZeroAddress();
     error ZeroBalance();
+    error NotPayer();
 
     /// @notice Emitted when a payment is deposited into the escrow
     /// @param payer The address of the student making the payment
@@ -94,6 +95,7 @@ contract TuitionEscrow is Initializable, ReentrancyGuardUpgradeable {
     /// @param _amount The amount of tokens to deposit
     /// @dev Requires the student to have approved the contract to spend their tokens
     function deposit(uint256 _amount) public nonReentrant {
+        if (msg.sender != payer) revert NotPayer();
         if (_amount == 0) revert InvalidAmount();
         IERC20(tokenPaymentAddress).safeTransferFrom(payer, address(this), _amount);
         amount += _amount;
@@ -105,7 +107,9 @@ contract TuitionEscrow is Initializable, ReentrancyGuardUpgradeable {
     function release() public nonReentrant {
         if (msg.sender != ITuitionEscrowFactory(escrowFactoryAddress).owner()) revert NotFactoryOwner();
         if (amount == 0) revert ZeroBalance();
-        IERC20(tokenPaymentAddress).safeTransfer(university, amount);
+        uint256 _amount = amount;
+        amount = 0;
+        IERC20(tokenPaymentAddress).safeTransfer(university, _amount);
         emit Released(university, amount);
     }
 
@@ -114,7 +118,15 @@ contract TuitionEscrow is Initializable, ReentrancyGuardUpgradeable {
     function refund() public nonReentrant {
         if (msg.sender != ITuitionEscrowFactory(escrowFactoryAddress).owner()) revert NotFactoryOwner();
         if (amount == 0) revert ZeroBalance();
-        IERC20(tokenPaymentAddress).safeTransfer(payer, amount);
-        emit Refunded(payer, amount);
+        uint256 _amount = amount;
+        amount = 0;
+        IERC20(tokenPaymentAddress).safeTransfer(payer, _amount);
+        emit Refunded(payer, _amount);
+    }
+
+    /// @notice Returns the owner of the escrow factory
+    /// @return The address of the factory owner
+    function getOwner() public view returns (address) {
+        return ITuitionEscrowFactory(escrowFactoryAddress).owner();
     }
 }

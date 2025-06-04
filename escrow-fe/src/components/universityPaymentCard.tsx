@@ -1,48 +1,83 @@
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Wallet } from "lucide-react";
+import { useEscrowDetails } from "@/lib/hooks/reads/escrowDetails";
+import { tokens } from "@/contants/tokens";
+import { universities } from "@/contants/universities";
+import { useErc20Balance } from "@/lib/hooks/reads/erc20Balance";
+import { useErc20Decimal } from "@/lib/hooks/reads/erc20Decimal";
+import UniversityPaymentDialog from "./universityPaymentDialog";
+import { Address } from "viem";
+import { Button } from "./ui/button";
+import { useOwnerFactory } from "@/lib/hooks/reads/ownerFactory";
+import { useAccount } from "wagmi";
+import { toast } from "sonner";
+import { useReleaseEscrow } from "@/lib/hooks/writes/releaseEscrow";
+import { useRefundEscrow } from "@/lib/hooks/writes/refundEscrow";
 
 interface UniversityPaymentCardProps {
-  university: string;
-  addressWallet: string;
-  addressPayer: string;
-  totalAmount: string;
-  tokenPayment: string;
-  invoiceRef: string;
+  index: number;
 }
 
-const universityPaymentCard = ({
-  university,
-  addressWallet,
-  addressPayer,
-  totalAmount,
-  tokenPayment,
-  invoiceRef,
-}: UniversityPaymentCardProps) => {
+const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
+  const { address } = useAccount();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [amount, setAmount] = useState("");
+  const { data: escrowDetails } = useEscrowDetails(index);
+
+  const addressPayer = escrowDetails?.[0] || "";
+  const university =
+    universities.find((university) => university.address === escrowDetails?.[1])
+      ?.name || "";
+  const addressWallet = escrowDetails?.[1] || "";
+  const addressEscrow = escrowDetails?.[2] || "";
+  const tokenAddress = escrowDetails?.[3] || "";
+  const tokenPayment =
+    tokens.find((token) => token.address === escrowDetails?.[3])?.name || "";
+  const invoiceRef = escrowDetails?.[4] || "";
+
+  const { data: totalAmount, refetchEscrowCount } = useErc20Balance(
+    tokenAddress as `0x${string}`,
+    addressEscrow as `0x${string}`
+  );
+
+  const { data: decimal } = useErc20Decimal(tokenAddress as `0x${string}`);
+
+  const { data: ownerFactory } = useOwnerFactory();
+
+  const { handleReleaseEscrow, isReleaseEscrowSuccess } = useReleaseEscrow(
+    addressEscrow as `0x${string}`
+  );
+  const { handleRefundEscrow, isRefundEscrowSuccess } = useRefundEscrow(
+    addressEscrow as `0x${string}`
+  );
+
+  useEffect(() => {
+    if (isReleaseEscrowSuccess) {
+      refetchEscrowCount();
+    }
+  }, [isReleaseEscrowSuccess, refetchEscrowCount]);
+
+  useEffect(() => {
+    if (isRefundEscrowSuccess) {
+      refetchEscrowCount();
+    }
+  }, [isRefundEscrowSuccess, refetchEscrowCount]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Process payment logic would go here
-    console.log("Payment submitted:", amount);
     setIsModalOpen(false);
   };
 
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === "" || /^\d+$/.test(value)) {
+      setAmount(value);
+    }
+  };
   const truncateAddress = (address: string) => {
     return `${address.substring(0, 6)}...${address.substring(
       address.length - 4
@@ -61,6 +96,7 @@ const universityPaymentCard = ({
             <div className="flex items-center text-sm text-muted-foreground dark:text-muted-foreground/80 mt-1">
               <Wallet className="h-4 w-4 mr-1" />
               <span>Address: {truncateAddress(addressWallet)}</span>
+              {/* <span>Address: {truncateAddress(address)}</span> */}
             </div>
           </div>
         </CardHeader>
@@ -79,7 +115,10 @@ const universityPaymentCard = ({
                 Total Amount:
               </span>
               <span className="font-medium dark:text-white">
-                ${totalAmount}
+                $
+                {totalAmount
+                  ? (Number(totalAmount) / 10 ** Number(decimal)).toString()
+                  : "0"}
               </span>
             </div>
             <div className="flex justify-between">
@@ -96,73 +135,65 @@ const universityPaymentCard = ({
               </span>
               <span className="font-medium dark:text-white">{invoiceRef}</span>
             </div>
+            <div
+              className={`${
+                ownerFactory?.toString() === address ? "flex" : "hidden"
+              } 
+                  justify-between gap-2`}
+            >
+              <div className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full bg-red-500 dark:bg-red-500 text-white hover:bg-red-600 dark:hover:bg-red-600 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (ownerFactory?.toString() !== address) {
+                      toast.error("You are not the owner of the factory");
+                    } else {
+                      handleRefundEscrow();
+                    }
+                  }}
+                >
+                  Refund
+                </Button>
+              </div>
+              <div className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full bg-green-500 dark:bg-green-500 text-white hover:bg-green-600 dark:hover:bg-green-600 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (ownerFactory?.toString() !== address) {
+                      toast.error("You are not the owner of the factory");
+                    } else {
+                      handleReleaseEscrow();
+                    }
+                  }}
+                >
+                  Release
+                </Button>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px] dark:bg-gray-800">
-          <DialogHeader>
-            <DialogTitle className="dark:text-white">
-              Make a Payment
-            </DialogTitle>
-            <DialogDescription className="dark:text-muted-foreground/80">
-              Enter the amount you want to pay to {university}.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="amount" className="dark:text-white">
-                Amount
-              </Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 dark:text-white">
-                  $
-                </span>
-                <Input
-                  id="amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  className="pl-8 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder:text-gray-400"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="dark:text-muted-foreground/80">
-                  Invoice Reference:
-                </span>
-                <span className="font-medium dark:text-white">
-                  {invoiceRef}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="dark:text-muted-foreground/80">
-                  Recipient:
-                </span>
-                <span className="font-medium dark:text-white">
-                  {truncateAddress(addressWallet)}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit">Submit Payment</Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <UniversityPaymentDialog
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        university={university}
+        invoiceRef={invoiceRef as string}
+        addressWallet={addressWallet}
+        onSubmit={handleSubmit}
+        amount={amount}
+        setAmount={setAmount}
+        onAmountChange={handleAmountChange}
+        decimal={Number(decimal)}
+        tokenAddress={tokenAddress as Address}
+        escrowAddress={addressEscrow as Address}
+        tokenPayment={tokenPayment}
+        onDepositSuccess={refetchEscrowCount}
+      />
     </>
   );
 };
