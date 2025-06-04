@@ -149,6 +149,8 @@ const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
                     e.stopPropagation();
                     if (ownerFactory?.toString() !== address) {
                       toast.error("You are not the owner of the factory");
+                    } else if (Number(totalAmount) === 0) {
+                      toast.error("No amount to refund");
                     } else {
                       handleRefundEscrow();
                     }
@@ -165,6 +167,8 @@ const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
                     e.stopPropagation();
                     if (ownerFactory?.toString() !== address) {
                       toast.error("You are not the owner of the factory");
+                    } else if (Number(totalAmount) === 0) {
+                      toast.error("No amount to release");
                     } else {
                       handleReleaseEscrow();
                     }
