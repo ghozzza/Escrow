@@ -16,7 +16,14 @@ import { useApproveErc20 } from "@/lib/hooks/writes/approveErc20";
 import { Address } from "viem";
 import { useErc20Balance } from "@/lib/hooks/reads/erc20Balance";
 import { useAccount } from "wagmi";
-import { LoaderCircle } from "lucide-react";
+import {
+  HandCoins,
+  LoaderCircle,
+  ScrollText,
+  Send,
+  User,
+  X,
+} from "lucide-react";
 import { useEffect } from "react";
 
 interface UniversityPaymentDialogProps {
@@ -89,11 +96,26 @@ const UniversityPaymentDialog = ({
 
   const buttonText = () => {
     if (isApproveErc20Pending || isDepositEscrowPending) {
-      return "Approving...";
+      return (
+        <>
+          <Send className="size-4 mr-1" />
+          Approving...
+        </>
+      );
     } else if (isApproveErc20Success) {
-      return "Submit Payment";
+      return (
+        <>
+          <Send className="size-4 mr-1" />
+          Submit Payment
+        </>
+      );
     } else {
-      return "Approve Payment";
+      return (
+        <>
+          <Send className="size-4 mr-1" />
+          Approve Payment
+        </>
+      );
     }
   };
   const buttonDisabled =
@@ -135,7 +157,12 @@ const UniversityPaymentDialog = ({
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="dark:text-muted-foreground/80">
-                Your balance:
+                <div className="flex items-center">
+                  <div>
+                    <HandCoins className="size-4 mr-1" />
+                  </div>
+                  <div>Your balance:</div>
+                </div>
               </span>
               <span className="font-medium dark:text-white">
                 {tokenBalanceFormatted} ${tokenPayment}
@@ -143,12 +170,24 @@ const UniversityPaymentDialog = ({
             </div>
             <div className="flex justify-between text-sm">
               <span className="dark:text-muted-foreground/80">
-                Invoice Reference:
+                <div className="flex items-center">
+                  <div>
+                    <ScrollText className="size-4 mr-1" />
+                  </div>
+                  <div>Invoice Reference:</div>
+                </div>
               </span>
               <span className="font-medium dark:text-white">{invoiceRef}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="dark:text-muted-foreground/80">Recipient:</span>
+              <span className="dark:text-muted-foreground/80">
+                <div className="flex items-center">
+                  <div>
+                    <User className="size-4 mr-1" />
+                  </div>
+                  <div>Recipient:</div>
+                </div>
+              </span>
               <span className="font-medium dark:text-white">
                 {truncateAddress(addressWallet)}
               </span>
@@ -160,6 +199,7 @@ const UniversityPaymentDialog = ({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
+              <X className="size-4 mr-1" />
               Cancel
             </Button>
             <Button

@@ -24,18 +24,28 @@ import { tokens } from "@/contants/tokens";
 import { useCreateEscrow } from "@/lib/hooks/writes/createEscrow";
 import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
 import type { ContractFunctionRevertedError } from "viem";
+import Image from "next/image";
+import { BadgePlus } from "lucide-react";
 
 interface FormCreateTuitionEscrowProps {
-  onEscrowCreated?: (options?: RefetchOptions) => Promise<QueryObserverResult<unknown, ContractFunctionRevertedError>>;
+  onEscrowCreated?: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<unknown, ContractFunctionRevertedError>>;
 }
 
-const formCreateTuitionEscrow = ({ onEscrowCreated }: FormCreateTuitionEscrowProps) => {
+const formCreateTuitionEscrow = ({
+  onEscrowCreated,
+}: FormCreateTuitionEscrowProps) => {
   const [university, setUniversity] = useState("");
   const [token, setToken] = useState("");
   const [invoiceRef, setInvoiceRef] = useState("");
 
-  const { isCreateEscrowPending, handleCreateEscrow } =
-    useCreateEscrow(university, invoiceRef, token, onEscrowCreated);
+  const { isCreateEscrowPending, handleCreateEscrow } = useCreateEscrow(
+    university,
+    invoiceRef,
+    token,
+    onEscrowCreated
+  );
 
   return (
     <div className="p-4">
@@ -73,6 +83,13 @@ const formCreateTuitionEscrow = ({ onEscrowCreated }: FormCreateTuitionEscrowPro
                     value={uni.address}
                     className="cursor-pointer text-gray-900 dark:text-white dark:hover:bg-gray-700"
                   >
+                    <Image
+                      src={uni.image}
+                      alt={uni.name}
+                      width={20}
+                      height={20}
+                      className="rounded-full size-5"
+                    />
                     {uni.name}
                   </SelectItem>
                 ))}
@@ -107,6 +124,13 @@ const formCreateTuitionEscrow = ({ onEscrowCreated }: FormCreateTuitionEscrowPro
                     value={token.address}
                     className="cursor-pointer dark:text-gray-200 dark:hover:bg-gray-700"
                   >
+                    <Image
+                      src={token.logo}
+                      alt={token.name}
+                      width={20}
+                      height={20}
+                      className="rounded-full size-5"
+                    />
                     {token.name}
                   </SelectItem>
                 ))}
@@ -133,8 +157,9 @@ const formCreateTuitionEscrow = ({ onEscrowCreated }: FormCreateTuitionEscrowPro
           <Button
             onClick={handleCreateEscrow}
             disabled={isCreateEscrowPending}
-            className="w-full mt-6 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-700 dark:from-purple-700 dark:via-blue-700 dark:to-cyan-700 dark:hover:from-purple-800 dark:hover:via-blue-800 dark:hover:to-cyan-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-101 hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full mt-6 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-700 dark:from-purple-700 dark:via-blue-700 dark:to-cyan-700 dark:hover:from-purple-800 dark:hover:via-blue-800 dark:hover:to-cyan-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition-all duration-300 dark:duration-300 hover:scale-101 hover:shadow-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
+            <BadgePlus className="size-4 mr-1" />
             Create Escrow
           </Button>
         </CardContent>

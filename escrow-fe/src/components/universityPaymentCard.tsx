@@ -3,7 +3,15 @@
 import type React from "react";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wallet } from "lucide-react";
+import {
+  BanknoteArrowDown,
+  CreditCard,
+  GalleryHorizontalEnd,
+  HandCoins,
+  Rocket,
+  ScrollText,
+  Wallet,
+} from "lucide-react";
 import { useEscrowDetails } from "@/lib/hooks/reads/escrowDetails";
 import { tokens } from "@/contants/tokens";
 import { universities } from "@/contants/universities";
@@ -91,20 +99,22 @@ const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
         onClick={() => setIsModalOpen(true)}
       >
         <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="dark:text-white">{university}</CardTitle>
-            <div className="flex items-center text-sm text-muted-foreground dark:text-muted-foreground/80 mt-1">
-              <Wallet className="h-4 w-4 mr-1" />
-              <span>Address: {truncateAddress(addressWallet)}</span>
-              {/* <span>Address: {truncateAddress(address)}</span> */}
-            </div>
+          <CardTitle className="dark:text-white">{university}</CardTitle>
+          <div className="flex items-center text-sm text-muted-foreground dark:text-muted-foreground/80 mt-1">
+            <Wallet className="h-4 w-4 mr-1" />
+            <span>Address: {truncateAddress(addressWallet)}</span>
           </div>
         </CardHeader>
         <CardContent className="pt-4 bg-white dark:bg-gray-800 pb-5 rounded-b-lg">
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-sm text-muted-foreground dark:text-muted-foreground/80">
-                Address Payer:
+                <div className="flex items-center">
+                  <div>
+                    <HandCoins className="size-4 mr-1" />
+                  </div>
+                  <div>Address Payer:</div>
+                </div>
               </span>
               <span className="font-medium dark:text-white">
                 {truncateAddress(addressPayer)}
@@ -112,7 +122,12 @@ const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-muted-foreground dark:text-muted-foreground/80">
-                Total Amount:
+                <div className="flex items-center">
+                  <div>
+                    <GalleryHorizontalEnd className="size-4 mr-1" />
+                  </div>
+                  <div>Total Amount:</div>
+                </div>
               </span>
               <span className="font-medium dark:text-white">
                 $
@@ -123,7 +138,12 @@ const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-muted-foreground dark:text-muted-foreground/80">
-                Token Payment:
+                <div className="flex items-center">
+                  <div>
+                    <CreditCard className="size-4 mr-1" />
+                  </div>
+                  <div>Token Payment:</div>
+                </div>
               </span>
               <span className="font-medium dark:text-white">
                 ${tokenPayment}
@@ -131,7 +151,12 @@ const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-muted-foreground dark:text-muted-foreground/80">
-                Invoice Ref:
+                <div className="flex items-center">
+                  <div>
+                    <ScrollText className="size-4 mr-1" />
+                  </div>
+                  <div>Invoice Ref:</div>
+                </div>
               </span>
               <span className="font-medium dark:text-white">{invoiceRef}</span>
             </div>
@@ -156,6 +181,7 @@ const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
                     }
                   }}
                 >
+                  <BanknoteArrowDown className="size-4 mr-1" />
                   Refund
                 </Button>
               </div>
@@ -174,6 +200,7 @@ const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
                     }
                   }}
                 >
+                  <Rocket className="size-4 mr-1" />
                   Release
                 </Button>
               </div>

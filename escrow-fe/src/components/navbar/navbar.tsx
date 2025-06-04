@@ -3,9 +3,14 @@
 import { ModeToggle } from "@/components/mode-toggle";
 import ButtonConnectWallet from "../button-connect-wallet";
 import { useEffect, useState } from "react";
-import { Menu } from "lucide-react";
+import { GraduationCap, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -32,7 +37,8 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center">
+        <div className="flex items-center space-x-2">
+          <GraduationCap className="h-7 w-7 text-primary" aria-hidden="true" />
           <h1 className="text-xl md:text-2xl font-bold">Tuition Escrow</h1>
         </div>
 
@@ -45,6 +51,7 @@ export function Navbar() {
         {/* Mobile Navigation */}
         <div className="md:hidden">
           <Sheet>
+            <SheetTitle className="hidden">Navigation</SheetTitle>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
@@ -52,10 +59,8 @@ export function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px] p-6">
-              <div className="flex flex-col space-y-6 mt-8">
-                <div className="flex items-center">
-                  <ModeToggle />
-                </div>
+              <ModeToggle />
+              <div className="flex flex-col space-y-6 mt-3">
                 <div className="flex flex-col space-y-4">
                   <ButtonConnectWallet />
                 </div>

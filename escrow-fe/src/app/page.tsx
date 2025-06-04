@@ -17,7 +17,7 @@ export default function Page() {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen overflow-x-hidden pt-16 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
       {/* Left side - Form (Fixed) */}
-      <div className="w-full lg:w-1/2 p-3 sm:p-4 lg:p-5 border-b lg:border-b-0 lg:border-r lg:min-h-screen lg:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] flex items-center justify-center">
+      <div className="w-full lg:w-1/2 p-3 sm:p-4 lg:p-5 lg:-mt-20 sm:mt-0 border-b lg:border-b-0 lg:border-r lg:min-h-screen lg:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] flex items-center justify-center">
         <div className="w-full max-w-2xl mx-auto">
           <FormCreateTuitionEscrow onEscrowCreated={refetchEscrowCount} />
         </div>

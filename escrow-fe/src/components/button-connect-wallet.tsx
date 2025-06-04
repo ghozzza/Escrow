@@ -28,12 +28,12 @@ const ButtonConnectWallet = () => {
 
         if (!account || !chain) {
           return (
-            <div className="relative group">
+            <div className="relative group w-full sm:w-auto">
               <BackgroundGradient className="rounded-3xl p-[1px] shadow-lg">
                 <button
                   onClick={openConnectModal}
                   type="button"
-                  className="flex items-center justify-center space-x-1.5 px-6 py-1.5 rounded-3xl bg-white dark:bg-gray-900 text-[#07094d] dark:text-white font-medium transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full"
+                  className="flex items-center justify-center space-x-1.5 px-4 sm:px-6 py-1.5 rounded-3xl bg-white dark:bg-gray-900 text-[#07094d] dark:text-white font-medium transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full text-sm sm:text-base"
                 >
                   <span>Connect Wallet</span>
                 </button>
@@ -44,12 +44,12 @@ const ButtonConnectWallet = () => {
 
         if (chain.unsupported) {
           return (
-            <div className="relative group">
+            <div className="relative group w-full sm:w-auto">
               <BackgroundGradient className="rounded-3xl p-[1px] shadow-lg">
                 <button
                   onClick={openChainModal}
                   type="button"
-                  className="flex items-center justify-center space-x-2 px-6 py-1.5 rounded-3xl bg-white dark:bg-gray-900 text-red-500 dark:text-red-400 font-medium transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full"
+                  className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-1.5 rounded-3xl bg-white dark:bg-gray-900 text-red-500 dark:text-red-400 font-medium transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] w-full text-sm sm:text-base"
                 >
                   <span>Wrong Network</span>
                   <ChevronDown className="w-4 h-4 ml-1" />
@@ -59,13 +59,13 @@ const ButtonConnectWallet = () => {
           );
         }
         return (
-          <div className="flex items-center gap-3">
-            <div className="relative group">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <div className="relative group w-full sm:w-auto">
               <BackgroundGradient className="rounded-3xl p-[1px] shadow-lg">
                 <button
                   onClick={openChainModal}
                   type="button"
-                  className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-3xl bg-white dark:bg-gray-900 text-[#07094d] dark:text-white hover:opacity-90 font-medium transition-all"
+                  className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-3xl bg-white dark:bg-gray-900 text-[#07094d] dark:text-white hover:opacity-90 font-medium transition-all w-full text-sm sm:text-base"
                 >
                   {chain.hasIcon && chain.iconUrl && (
                     <img
@@ -75,20 +75,20 @@ const ButtonConnectWallet = () => {
                       style={{ background: chain.iconBackground }}
                     />
                   )}
-                  <span>{chain.name}</span>
-                  <ChevronDown className="w-4 h-4 ml-1 opacity-70" />
+                  <span className="truncate max-w-[100px] sm:max-w-[120px]">{chain.name}</span>
+                  <ChevronDown className="w-4 h-4 ml-1 opacity-70 flex-shrink-0" />
                 </button>
               </BackgroundGradient>
             </div>
 
-            <div className="relative group">
+            <div className="relative group w-full sm:w-auto">
               <BackgroundGradient className="rounded-3xl p-[1px] shadow-lg">
                 <button
                   onClick={openAccountModal}
                   type="button"
-                  className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-3xl bg-white dark:bg-gray-900 text-[#07094d] dark:text-white hover:opacity-90 font-medium transition-all"
+                  className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-3xl bg-white dark:bg-gray-900 text-[#07094d] dark:text-white hover:opacity-90 font-medium transition-all w-full text-sm sm:text-base"
                 >
-                  <span className="truncate max-w-[120px]">
+                  <span className="truncate max-w-[100px] sm:max-w-[120px]">
                     {account.displayName}
                   </span>
                 </button>
