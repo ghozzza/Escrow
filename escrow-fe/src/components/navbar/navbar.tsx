@@ -11,6 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import Link from "next/link";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -37,9 +38,14 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <GraduationCap className="h-7 w-7 text-primary" aria-hidden="true" />
-          <h1 className="text-xl md:text-2xl font-bold">Tuition Escrow</h1>
+        <div >
+          <Link className="flex items-center space-x-2" href="/">
+            <GraduationCap
+              className="h-7 w-7 text-primary"
+              aria-hidden="true"
+            />
+            <h1 className="text-xl md:text-2xl font-bold">Tuition Escrow</h1>
+          </Link>
         </div>
 
         {/* Desktop Navigation */}

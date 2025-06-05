@@ -96,7 +96,11 @@ const universityPaymentCard = ({ index }: UniversityPaymentCardProps) => {
     <>
       <Card
         className="max-w-md cursor-pointer hover:shadow-md transition-shadow bg-muted dark:bg-muted/50 pb-0"
-        onClick={() => setIsModalOpen(true)}
+        onClick={() =>
+          addressPayer === address
+            ? setIsModalOpen(true)
+            : toast.error("You are not the payer of the escrow")
+        }
       >
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="dark:text-white">{university}</CardTitle>
